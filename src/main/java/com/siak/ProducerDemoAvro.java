@@ -2,6 +2,7 @@ package com.siak;
 
 
 import com.siak.model.customer.Customer;
+import com.siak.partitioner.CustomerPartitionner;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 
 import static com.siak.producer.KafkaGenericConfig.defaultProducerConfig;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.PARTITIONER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
 public class ProducerDemoAvro {
@@ -28,6 +30,7 @@ public class ProducerDemoAvro {
                 30000, 3, new HashMap<>());
         config.put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
         config.put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
+        config.put(PARTITIONER_CLASS_CONFIG, CustomerPartitionner.class.getName());
         config.put("schema.registry.url", schemaUrl);
 
         KafkaProducer<String, Customer> producer = new KafkaProducer<>(config);
