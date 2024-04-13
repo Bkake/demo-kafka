@@ -1,0 +1,23 @@
+{
+	"type": "record",
+	"name": "Customer",
+	"namespace": "com.siak.model.customer",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "name",
+			"type": "string"
+		},
+		{
+			"name": "email",
+			"type": [
+				"null",
+				"string"
+			],
+			"default": null
+		}
+	]
+}
