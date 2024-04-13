@@ -1,6 +1,7 @@
 package com.siak;
 
 
+import com.siak.interceptor.CustomerInterceptor;
 import com.siak.model.customer.Customer;
 import com.siak.partitioner.CustomerPartitionner;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
@@ -9,10 +10,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import static com.siak.producer.KafkaGenericConfig.defaultProducerConfig;
+import static org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.PARTITIONER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
@@ -32,6 +33,7 @@ public class ProducerDemoAvro {
         config.put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
         config.put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
         config.put(PARTITIONER_CLASS_CONFIG, CustomerPartitionner.class.getName());
+        config.put(INTERCEPTOR_CLASSES_CONFIG, CustomerInterceptor.class.getName());
         config.put("schema.registry.url", schemaUrl);
 
         KafkaProducer<String, Customer> producer = new KafkaProducer<>(config);
@@ -46,21 +48,9 @@ public class ProducerDemoAvro {
 
             ProducerRecord<String, Customer> producerRecord =
                     new ProducerRecord<>(topicName, key, customer);
-            producerRecord.headers().add("privacy-level", "YOLO".getBytes(StandardCharsets.UTF_8));
 
             // send data - async
-            producer.send(producerRecord, (recordMetadata, e) -> {
-                if (e == null) {
-                    logger.info(String.format("Received new metadata " +
-                                    "Topic:%s Partition: %d Offset: %d Timestamp: %d",
-                            recordMetadata.topic(),
-                            recordMetadata.partition(),
-                            recordMetadata.offset(),
-                            recordMetadata.timestamp()));
-                } else {
-                    logger.error("Error while producing", e);
-                }
-            });
+            producer.send(producerRecord);
         }
 
         // flush data - sync
