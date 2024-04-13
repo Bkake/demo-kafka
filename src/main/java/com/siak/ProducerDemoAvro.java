@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import static com.siak.producer.KafkaGenericConfig.defaultProducerConfig;
@@ -45,6 +46,7 @@ public class ProducerDemoAvro {
 
             ProducerRecord<String, Customer> producerRecord =
                     new ProducerRecord<>(topicName, key, customer);
+            producerRecord.headers().add("privacy-level", "YOLO".getBytes(StandardCharsets.UTF_8));
 
             // send data - async
             producer.send(producerRecord, (recordMetadata, e) -> {
