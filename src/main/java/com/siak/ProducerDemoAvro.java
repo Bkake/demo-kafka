@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
-import static com.siak.producer.KafkaGenericConfig.defaultProducerConfig;
+import static com.siak.config.KafkaGenericConfig.defaultProducerConfig;
 import static org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.PARTITIONER_CLASS_CONFIG;

@@ -1,4 +1,4 @@
-package com.siak.producer;
+package com.siak.config;
 
 import org.apache.commons.collections4.MapUtils;
 

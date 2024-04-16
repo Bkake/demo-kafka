@@ -1,7 +1,7 @@
 package com.siak;
 
 
-import com.siak.producer.KafkaGenericConfig;
+import com.siak.config.KafkaGenericConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
