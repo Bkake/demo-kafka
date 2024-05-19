@@ -1,4 +1,4 @@
-package com.siak;
+package com.siak.producer;
 
 
 import com.siak.interceptor.CustomerInterceptor;

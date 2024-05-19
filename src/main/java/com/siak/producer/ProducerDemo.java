@@ -1,4 +1,4 @@
-package com.siak;
+package com.siak.producer;
 
 
 import com.siak.config.KafkaGenericConfig;
@@ -15,10 +15,10 @@ import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_
 
 public class ProducerDemo {
     public  static final Logger logger = LoggerFactory.getLogger(ProducerDemo.class);
-    public static void main( String[] args )  {
+    public static void main( String[] args ) {
         logger.info( "I am a Kafka Producer!" );
 
-        var bootStrapServers = "localhost:19092";
+        var bootStrapServers = "localhost:19092,localhost:39092,localhost:39092";
         var topicName = "demo";
 
         // create Producer properties
@@ -31,7 +31,7 @@ public class ProducerDemo {
         KafkaProducer<String,String> producer = new KafkaProducer<>(properties,
                 new StringSerializer(), new StringSerializer());
 
-        for (int i = 0; i < 10 ; i++) {
+        for (int i = 1; i <= 2 ; i++) {
             var key = "id_"+i;
             var message = "HelloWorld" + i;
 
@@ -52,7 +52,6 @@ public class ProducerDemo {
                     logger.error("Error while producing", e);
                 }
             });
-
         }
 
         // flush data - sync
