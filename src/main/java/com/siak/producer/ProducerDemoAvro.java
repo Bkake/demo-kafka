@@ -20,7 +20,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_
 
 public class ProducerDemoAvro {
     public  static final Logger logger = LoggerFactory.getLogger(ProducerDemoAvro.class);
-    public static void main( String[] args )  {
+    public static void main( String[] args ) throws InterruptedException {
         logger.info( "I am a Kafka Avro Producer!" );
 
         var bootStrapServers = "localhost:29092";
@@ -32,13 +32,13 @@ public class ProducerDemoAvro {
                 30000, 3, new HashMap<>());
         config.put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
         config.put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
-        config.put(PARTITIONER_CLASS_CONFIG, CustomerPartitionner.class.getName());
+        //config.put(PARTITIONER_CLASS_CONFIG, CustomerPartitionner.class.getName());
         config.put(INTERCEPTOR_CLASSES_CONFIG, CustomerInterceptor.class.getName());
         config.put("schema.registry.url", schemaUrl);
 
         KafkaProducer<String, Customer> producer = new KafkaProducer<>(config);
 
-        for (int i = 0; i < 10 ; i++) {
+        for (int i = 0; i < 1000 ; i++) {
             var key = "id_"+ i;
             var name = "customer" + i;
             var email = "customer" + i + "@aol.com";
@@ -51,6 +51,8 @@ public class ProducerDemoAvro {
 
             // send data - async
             producer.send(producerRecord);
+
+            Thread.sleep(1000);
         }
 
         // flush data - sync
