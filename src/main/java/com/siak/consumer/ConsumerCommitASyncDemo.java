@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
@@ -20,6 +21,8 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZE
 
 public class ConsumerCommitASyncDemo {
     public  static final Logger logger = LoggerFactory.getLogger(ConsumerCommitASyncDemo.class);
+
+    private static final AtomicLong atomicLong = new AtomicLong();
 
     public static void main(String[] args) {
         logger.info( "I am a Kafka Consumer CommitASync!" );
@@ -36,16 +39,21 @@ public class ConsumerCommitASyncDemo {
             consumer.subscribe(Collections.singletonList("demoCommitASync"));
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                for (ConsumerRecord<String, String> record : records) {
-                    System.out.printf("partition = %d,  offset = %d, key = %s, value = %s%n", record.partition(),
-                            record.offset(), record.key(), record.value());
+                for (ConsumerRecord<String, String> consumerRecord : records) {
+                    System.out.printf("partition = %d,  offset = %d, key = %s, value = %s%n", consumerRecord.partition(),
+                            consumerRecord.offset(), consumerRecord.key(), consumerRecord.value());
                 }
                 consumer.commitAsync((offsets, exception) -> {
+                    long position =  atomicLong.incrementAndGet();
                     if (exception != null) {
+                        if (position == atomicLong.get()) {
+                            consumer.commitAsync();
+                        }
                         logger.error("Commit failed for offsets {}", offsets, exception);
                     }
                 });
             }
         }
     }
+
 }
